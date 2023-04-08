@@ -1,13 +1,13 @@
 from flask import Flask, render_template, request
 import random
+from datetime import date
 
 app = Flask(__name__)
 
 
 def get_questions():
-    """Return a list of 20 addition questions."""
-
-    random.seed(1)
+    """Return a list of 20 questions."""
+    random.seed(date.today().toordinal)
 
     questions = []
     for _ in range(20):
