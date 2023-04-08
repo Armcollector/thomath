@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 def get_questions():
     """Return a list of 20 questions."""
-    random.seed(date.today().toordinal)
+    random.seed(date.today().toordinal())
 
     questions = []
     for _ in range(20):

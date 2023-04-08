@@ -2,14 +2,26 @@
 <html>
 <head>
 	<title>Math Quiz</title>
+	<!-- Add Bootstrap CSS file -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+hk/KHfL5eYzJgHmkz6YrTvMvPmXQzF0RJbLl" crossorigin="anonymous">
 </head>
 <body>
-	<h1>Math Quiz</h1>
-	<form method="POST" action="{{ url_for('submit') }}">
-		{% for q in questions %}
-			<p>{{ q['q'] }} = <input type="text" name="answer{{ loop.index }}"></p>
-		{% endfor %}
-		<input type="submit" value="Submit">
-	</form>
+	<div class="container mt-5">
+		<h1 class="text-center mb-4">Math Quiz</h1>
+		<form method="POST" action="{{ url_for('submit') }}">
+			{% for q in questions %}
+				<div class="form-group">
+					<label>{{ q['q'] }} =</label>
+					<input type="text" name="answer{{ loop.index }}" class="form-control">
+				</div>
+			{% endfor %}
+			<button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>
+		</form>
+	</div>
+	
+	<!-- Add Bootstrap JS file -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+hk/KHfL5eYzJgHmkz6YrTvMvPmXQzF0RJbLl" crossorigin="anonymous"></script>
 </body>
 </html>
