@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Math Quiz</title>
+	<title>Thomas math quiz</title>
 	<!-- Add Bootstrap CSS file -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+hk/KHfL5eYzJgHmkz6YrTvMvPmXQzF0RJbLl" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" >
 </head>
 <body>
 	<div class="container mt-5">
-		<h1 class="text-center mb-4">Math Quiz</h1>
+		<h1 class="text-center mb-4">Thomas math quiz</h1>
 		<form method="POST" action="{{ url_for('submit') }}">
 			{% for q in questions %}
-				<div class="form-group">
-					<label>{{ q['q'] }} =</label>
+				<div class="form-group form-inline">
+					<label class="mr-2" style="width: 100px">{{ q['q'] }} =</label>
 					<input type="text" name="answer{{ loop.index }}" class="form-control">
 				</div>
 			{% endfor %}
