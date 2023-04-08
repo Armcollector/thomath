@@ -1,9 +1,9 @@
-from flask import Flask, render_template, request
+from flask import Flask, flash, redirect, render_template, request, url_for
 import random
 from datetime import date
 
 app = Flask(__name__)
-
+app.secret_key = '100digitsofpi'
 
 def get_questions():
     """Return a list of 20 questions."""
@@ -24,18 +24,28 @@ def index():
 
     return render_template('index.html', questions= get_questions())
 
+
+def calculate_score(answers):
+    """
+    Calculate the number of correct answers given by the user.
+    """
+    return sum(
+        str(get_questions()[i]['a']) == answer.strip()
+        for i, answer in enumerate(answers)
+    )
+
 @app.route('/submit', methods=['POST'])
 def submit():
-    # Get the user's answers from the form
-    answers = [request.form[f'answer{str(i)}'] for i in range(1, 21)]
+    answers = [request.form[f'answer{i}'] for i in range(1, 21)]
+    # Check if all answers are correct
+    correct_answers = [str(q['a']) for q in get_questions()]
+    if answers != correct_answers:
+        flash('Sorry, not all answers are correct. Please try again.', 'danger')
+        return redirect(url_for('index'))
 
-    # Define the correct answers to the questions
-    correct_answers = [q['a'] for q in  get_questions()]
-
-    # Compute the number of correct answers
-    num_correct = sum(answers[i] == correct_answers[i] for i in range(20))
-
-    return render_template('submit.html', num_correct=num_correct)
+    # Calculate score and redirect to success page
+    score = calculate_score(answers)
+    return redirect(url_for('success', score=score))
 
 if __name__ == '__main__':
 
