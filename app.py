@@ -10,7 +10,7 @@ def get_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(20):
+    for _ in range(15):
         a = random.randint(2, 20)
         b = random.randint(2, 20)
         q = f"{a} * {b}"
@@ -22,21 +22,20 @@ def get_questions():
 def index():
     # Define a list of 20 math questions
 
-    if request.method == 'POST':
-        # Check if all answers are correct
-        submitted_answers = list(request.form.values())
-        correct_answers = [str(q['a']) for q in get_questions()]
-        if submitted_answers != correct_answers:
-            flash('Sorry, not all answers are correct. Please try again.', 'danger')
-            answers = { k: a if v == a else '' for (k,v),a in zip(request.form.items(), correct_answers)}
-            return render_template('index.html', questions= get_questions(), answers=answers)
+    if request.method == 'GET':
+        return render_template('index.html', questions= get_questions(), answers=request.form)
+    
+    
+    submitted_answers = list(request.form.values())
+    correct_answers = [str(q['a']) for q in get_questions()]
+    if submitted_answers != correct_answers:
+        flash('Sorry, not all answers are correct. Please try again.', 'danger')
+        answers = { k: a if v == a else '' for (k,v),a in zip(request.form.items(), correct_answers)}
+        return render_template('index.html', questions= get_questions(), answers=answers)
 
-        # Calculate score and redirect to success page
-        score = calculate_score(submitted_answers)
-        return redirect(url_for('success', score=score))
-
-
-    return render_template('index.html', questions= get_questions(), answers=request.form)
+    # Calculate score and redirect to success page
+    score = calculate_score(submitted_answers)
+    return redirect(url_for('success', score=score))
 
 
 def calculate_score(answers):
