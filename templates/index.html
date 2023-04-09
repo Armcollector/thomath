@@ -25,7 +25,7 @@
 			{% for q in questions %}
 				<div class="form-group form-inline">
 					<label class="mr-2" style="width: 100px">{{ q['q'] }} =</label>
-					<input type="number" class="form-control" id="answer{{ loop.index+1 }}" name="answer{{ loop.index+1 }}" value="{{ answers[loop.index+1] }}" required>
+					<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}" value="{{ answers[loop.index] }}" required>
 				</div>
 			{% endfor %}
 			<button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>

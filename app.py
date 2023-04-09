@@ -24,7 +24,7 @@ def index():
 
     if request.method == 'POST':
         # Check if all answers are correct
-        answers = [request.form[f'answer{i}'] for i in range(1, 21)]
+        answers = list(request.form.values())
         correct_answers = [str(q['a']) for q in get_questions()]
         if answers != correct_answers:
             flash('Sorry, not all answers are correct. Please try again.', 'danger')
@@ -46,6 +46,10 @@ def calculate_score(answers):
         str(get_questions()[i]['a']) == answer.strip()
         for i, answer in enumerate(answers)
     )
+
+@app.route('/success/<int:score>')
+def success(score):
+    return render_template('success.html', score=score)
 
 if __name__ == '__main__':
 

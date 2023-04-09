@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Success!</title>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			// Replace YOUR_UNSPLASH_ACCESS_KEY with your actual Unsplash API access key
+			var accessKey = "kPaGYROhEyoYmTjMcrZyO5Vuf7olznGIw-1oCtrYwro";
+			var apiUrl = "https://api.unsplash.com/photos/random?query=pokemon&orientation=landscape&client_id=" + accessKey;
+			
+			// Get a random image from Unsplash
+			$.getJSON(apiUrl, function(data) {
+				var imageUrl = data.urls.regular;
+				var imageAlt = data.alt_description;
+				
+				// Display the image on the page
+				$("#image-container").append("<img src='" + imageUrl + "' alt='" + imageAlt + "'>");
+			});
+		});
+	</script>
+</head>
+<body>
+	<h1>Success!</h1>
+	<p>Your answers have been submitted.</p>
+	
+	<!-- This div will be used to display the image -->
+	<div id="image-container"></div>
+</body>
+</html>
