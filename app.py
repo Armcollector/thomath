@@ -10,7 +10,7 @@ def get_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(20):
+    for _ in range(15):
         a = random.randint(2, 20)
         b = random.randint(2, 20)
         q = f"{a} * {b}"
@@ -18,11 +18,24 @@ def get_questions():
     random.shuffle(questions)  # Shuffle the list of questions
     return questions
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     # Define a list of 20 math questions
 
-    return render_template('index.html', questions= get_questions())
+    if request.method == 'GET':
+        return render_template('index.html', questions= get_questions(), answers=request.form)
+    
+    
+    submitted_answers = list(request.form.values())
+    correct_answers = [str(q['a']) for q in get_questions()]
+    if submitted_answers != correct_answers:
+        flash('Sorry, not all answers are correct. Please try again.', 'danger')
+        answers = { k: a if v == a else '' for (k,v),a in zip(request.form.items(), correct_answers)}
+        return render_template('index.html', questions= get_questions(), answers=answers)
+
+    # Calculate score and redirect to success page
+    score = calculate_score(submitted_answers)
+    return redirect(url_for('success', score=score))
 
 
 def calculate_score(answers):
@@ -34,18 +47,9 @@ def calculate_score(answers):
         for i, answer in enumerate(answers)
     )
 
-@app.route('/submit', methods=['POST'])
-def submit():
-    answers = [request.form[f'answer{i}'] for i in range(1, 21)]
-    # Check if all answers are correct
-    correct_answers = [str(q['a']) for q in get_questions()]
-    if answers != correct_answers:
-        flash('Sorry, not all answers are correct. Please try again.', 'danger')
-        return redirect(url_for('index'))
-
-    # Calculate score and redirect to success page
-    score = calculate_score(answers)
-    return redirect(url_for('success', score=score))
+@app.route('/success/<int:score>')
+def success(score):
+    return render_template('success.html', score=score)
 
 if __name__ == '__main__':
 
