@@ -7,7 +7,8 @@
 </head>
 <body>
 	<div class="container mt-5">
-		{{answers}}
+		
+		<h1 class="text-center mb-4">Thomas math quiz</h1>
 		{% with messages = get_flashed_messages() %}
             {% if messages %}
                 <div class="row">
@@ -20,12 +21,11 @@
             {% endif %}
         {% endwith %}
 
-		<h1 class="text-center mb-4">Thomas math quiz</h1>
 		<form method="POST" action="{{ url_for('index') }}">
 			{% for q in questions %}
 				<div class="form-group form-inline">
 					<label class="mr-2" style="width: 100px">{{ q['q'] }} =</label>
-					<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}" value="{{ answers[loop.index] }}" required>
+					<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}" value="{{answers['answer'+loop.index|string]}}" required>
 				</div>
 			{% endfor %}
 			<button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>

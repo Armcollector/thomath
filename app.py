@@ -10,7 +10,7 @@ def get_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(2):
+    for _ in range(20):
         a = random.randint(2, 20)
         b = random.randint(2, 20)
         q = f"{a} * {b}"
@@ -24,14 +24,15 @@ def index():
 
     if request.method == 'POST':
         # Check if all answers are correct
-        answers = list(request.form.values())
+        submitted_answers = list(request.form.values())
         correct_answers = [str(q['a']) for q in get_questions()]
-        if answers != correct_answers:
+        if submitted_answers != correct_answers:
             flash('Sorry, not all answers are correct. Please try again.', 'danger')
-            return render_template('index.html', questions= get_questions(), answers=request.form)
+            answers = { k: a if v == a else '' for (k,v),a in zip(request.form.items(), correct_answers)}
+            return render_template('index.html', questions= get_questions(), answers=answers)
 
         # Calculate score and redirect to success page
-        score = calculate_score(answers)
+        score = calculate_score(submitted_answers)
         return redirect(url_for('success', score=score))
 
 
