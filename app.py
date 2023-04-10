@@ -26,7 +26,7 @@ def index():
 
     if request.method == "GET":
         return render_template(
-            "index.html", questions=get_questions(), answers=request.form
+            "index.html", questions=get_questions(), answers=request.form, progress=0
         )
 
     submitted_answers = list(request.form.values())
@@ -37,7 +37,14 @@ def index():
             k: a if v == a else ""
             for (k, v), a in zip(request.form.items(), correct_answers)
         }
-        return render_template("index.html", questions=get_questions(), answers=answers)
+        progress = int(
+            sum(a == b for a, b in zip(submitted_answers, correct_answers))
+            / len(correct_answers)
+            * 100
+        )
+        return render_template(
+            "index.html", questions=get_questions(), answers=answers, progress=progress
+        )
 
     # Calculate score and redirect to success page
     score = calculate_score(submitted_answers)
