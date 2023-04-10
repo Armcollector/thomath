@@ -1,40 +1,44 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<title>Thomas math quiz</title>
 	<!-- Add Bootstrap CSS file -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" >
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
+
 <body>
 	<div class="container mt-5">
-		
+
 		<h1 class="text-center mb-4">Thomas math quiz</h1>
 		{% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div class="row">
-                    <div class="col-md-6 offset-md-3">
-                        {% for message in messages %}
-							{{ message }}
-                        {% endfor %}
-                    </div>
-                </div>
-            {% endif %}
-        {% endwith %}
+		{% if messages %}
+		<div class="row">
+			<div class="col-md-6 offset-md-3">
+				{% for message in messages %}
+				{{ message }}
+				{% endfor %}
+			</div>
+		</div>
+		{% endif %}
+		{% endwith %}
 
 		<form method="POST" action="{{ url_for('index') }}">
 			{% for q in questions %}
-				<div class="form-group form-inline">
-					<label class="mr-2" style="width: 100px">{{ q['q'] }} =</label>
-					<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}" value="{{answers['answer'+loop.index|string]}}" required>
-				</div>
+			<div class="form-group form-inline">
+				<label class="mr-2" style="width: 100px">{{ q['q'] }} =</label>
+				<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}"
+					value="{{answers['answer'+loop.index|string]}}" required autocomplete="off">
+			</div>
 			{% endfor %}
 			<button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>
 		</form>
 	</div>
-	
+
 	<!-- Add Bootstrap JS file -->
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" ></script>
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" ></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>
