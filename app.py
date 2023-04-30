@@ -1,6 +1,7 @@
-from flask import Flask, flash, redirect, render_template, request, url_for
 import random
 from datetime import date
+
+from flask import Flask, flash, redirect, render_template, request, url_for
 
 app = Flask(__name__)
 app.secret_key = "100digitsofpi"
@@ -12,8 +13,8 @@ def get_questions():
 
     questions = []
     for _ in range(15):
-        a = random.randint(2, 20)
-        b = random.randint(2, 20)
+        a = random.randint(10, 30)
+        b = random.randint(10, 30)
         q = f"{a} * {b}"
         questions.append({"q": q, "a": str(a * b)})
     random.shuffle(questions)  # Shuffle the list of questions
