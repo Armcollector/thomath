@@ -12,11 +12,21 @@ def get_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(15):
-        a = random.randint(10, 30)
-        b = random.randint(10, 30)
+    for _ in range(7):
+        a = random.randint(20, 50)
+        b = random.randint(20, 50)
         q = f"{a} * {b}"
         questions.append({"q": q, "a": str(a * b)})
+
+    for _ in range(8):
+        a = random.randint(20, 80)
+
+        divisors = [i for i in range(2, a) if a % i == 0]
+        b = random.choice(divisors)
+
+        q = f"{a} / {b}"
+        questions.append({"q": q, "a": str(a * b)})
+
     random.shuffle(questions)  # Shuffle the list of questions
     return questions
 
