@@ -18,14 +18,23 @@ def get_questions():
         q = f"{a} * {b}"
         questions.append({"q": q, "a": str(a * b)})
 
-    for _ in range(8):
+    while len(questions) < 12:
         a = random.randint(20, 80)
 
         divisors = [i for i in range(2, a) if a % i == 0]
+        if not divisors:
+            continue
         b = random.choice(divisors)
 
         q = f"{a} / {b}"
-        questions.append({"q": q, "a": str(a * b)})
+        questions.append({"q": q, "a": str(a // b)})
+
+    while len(questions) < 16:
+        a = random.randint(1000, 9999)
+        b = random.randint(1000, 9999)
+        b, a = sorted([a, b])
+        q = f"{a} - {b}"
+        questions.append({"q": q, "a": str(a - b)})
 
     random.shuffle(questions)  # Shuffle the list of questions
     return questions
