@@ -8,6 +8,21 @@
 </head>
 
 <body>
+
+	<form method="POST" action="{{ url_for('index') }}">
+		<h4>Choose difficulty:</h4>
+		<div class="form-group form-inline">
+			<input type="radio" class="form-control" id="easy" name="difficulty" value="easy">
+			<label for="easy">Easy</label>
+			<input type="radio" class="form-control" id="medium" name="difficulty" value="medium">
+			<label for="easy">Medium</label>
+			<input type="radio" class="form-control" id="hard" name="difficulty" value="hard">
+			<label for="easy">Hard</label>
+			<button type="submit" class="btn btn-primary">Submit</button>
+		</div>
+		
+	</form>
+
 	<div class="container mt-5">
 
 		<h1 class="text-center mb-4">Thomas math quiz</h1>
@@ -33,7 +48,7 @@
 		<form method="POST" action="{{ url_for('index') }}">
 			{% for q in questions %}
 			<div class="form-group form-inline">
-				<label class="mr-2" style="width: 100px">{{ q['q'] }} =</label>
+				<label class="mr-2" style="width: 200px">{{ q['q'] }} =</label>
 				<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}"
 					value="{{answers['answer'+loop.index|string]}}" autocomplete="off">
 			</div>
