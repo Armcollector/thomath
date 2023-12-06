@@ -111,11 +111,6 @@ def get_hard_questions():
 def index():
     # Define a list of 20 math questions
 
-    if request.method == "GET":
-        return render_template(
-            "index.html", questions=get_questions(), answers=request.form, progress=0
-        )
-
     if difficulty := request.form.get("difficulty"):
         if difficulty == "easy":
             session["difficulty"] = "easy"
@@ -127,6 +122,14 @@ def index():
             raise ValueError(f"Unknown difficulty: {difficulty}")
 
     difficulty = session.get("difficulty", "hard")
+
+    if request.method == "GET":
+        return render_template(
+            "index.html",
+            questions=get_questions(difficulty),
+            answers=request.form,
+            progress=0,
+        )
 
     submitted_answers = list(request.form.values())
     correct_answers = [str(q["a"]) for q in get_questions(difficulty)]
@@ -149,16 +152,16 @@ def index():
         )
 
     # Calculate score and redirect to success page
-    score = calculate_score(submitted_answers)
+    score = calculate_score(submitted_answers, difficulty)
     return redirect(url_for("success", score=score))
 
 
-def calculate_score(answers):
+def calculate_score(answers, difficulty):
     """
     Calculate the number of correct answers given by the user.
     """
     return sum(
-        str(get_questions()[i]["a"]) == answer.strip()
+        str(get_questions(difficulty)[i]["a"]) == answer.strip()
         for i, answer in enumerate(answers)
     )
 
