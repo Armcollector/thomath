@@ -80,15 +80,15 @@ def get_hard_questions():
 
     questions = []
     for _ in range(7):
-        a = random.randint(20, 50)
-        b = random.randint(20, 50)
+        a = random.randint(20, 99)
+        b = random.randint(20, 99)
         q = f"{a} * {b}"
         questions.append({"q": q, "a": str(a * b)})
 
     while len(questions) < 12:
-        a = random.randint(20, 80)
+        a = random.randint(100, 999)
 
-        divisors = [i for i in range(2, a) if a % i == 0]
+        divisors = [i for i in range(2, 10) if a % i == 0]
         if not divisors:
             continue
         b = random.choice(divisors)
@@ -102,6 +102,13 @@ def get_hard_questions():
         b, a = sorted([a, b])
         q = f"{a} - {b}"
         questions.append({"q": q, "a": str(a - b)})
+
+    while len(questions) < 20:
+        a = random.randint(2, 10)
+        b = random.randint(1, 10)
+        x = random.randint(1, 10)
+        q = f"{a}x+{b}={a*x+b} , x=?"
+        questions.append({"q": q, "a": str(x)})
 
     random.shuffle(questions)  # Shuffle the list of questions
     return questions
