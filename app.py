@@ -79,11 +79,17 @@ def get_hard_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(7):
+    for _ in range(2):
         a = random.randint(20, 99)
         b = random.randint(20, 99)
         q = f"{a} * {b}"
         questions.append({"q": q, "a": str(a * b)})
+
+    for _ in range(5):
+        a = random.randint(2, 100)
+        b = random.randint(2, 100)
+        q = f"Hva er {a} % av {b}"
+        questions.append({"q": q, "a": round(a / 100 * b, 2)})
 
     while len(questions) < 12:
         a = random.randint(100, 999)

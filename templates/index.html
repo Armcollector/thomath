@@ -50,7 +50,7 @@
 			<div class="form-group form-inline">
 				<label class="mr-2" style="width: 200px">{{ q['q'] }} =</label>
 				<input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}"
-					value="{{answers['answer'+loop.index|string]}}" autocomplete="off">
+					value="{{answers['answer'+loop.index|string]}}" autocomplete="off" step="0.01">
 			</div>
 			{% endfor %}
 			<button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>
