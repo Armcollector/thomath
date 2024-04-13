@@ -91,7 +91,7 @@ def get_hard_questions():
         q = f"Hva er {a} % av {b}"
         questions.append({"q": q, "a": round(a / 100 * b, 2)})
 
-    while len(questions) < 12:
+    while len(questions) < 10:
         a = random.randint(100, 999)
 
         divisors = [i for i in range(2, 10) if a % i == 0]
@@ -102,7 +102,7 @@ def get_hard_questions():
         q = f"{a} / {b}"
         questions.append({"q": q, "a": str(a // b)})
 
-    while len(questions) < 16:
+    while len(questions) < 13:
         a = random.randint(1000, 9999)
         b = random.randint(1000, 9999)
         b, a = sorted([a, b])
@@ -111,9 +111,9 @@ def get_hard_questions():
 
     while len(questions) < 20:
         a = random.randint(2, 10)
-        b = random.randint(1, 10)
-        x = random.randint(1, 10)
-        q = f"{a}x+{b}={a*x+b} , x=?"
+        b = random.randint(-100, 100)
+        x = random.randint(1, 30)
+        q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
         questions.append({"q": q, "a": str(x)})
 
     random.shuffle(questions)  # Shuffle the list of questions
@@ -122,6 +122,8 @@ def get_hard_questions():
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    if "nr_answered" not in session:
+        session["nr_answered"] = 0
     # Define a list of 20 math questions
 
     if difficulty := request.form.get("difficulty"):
@@ -144,12 +146,13 @@ def index():
             progress=0,
         )
 
-    submitted_answers = list(request.form.values())
-    correct_answers = [str(q["a"]) for q in get_questions(difficulty)]
+    submitted_answers = [
+        float(i) if i != "" else None for i in list(request.form.values())
+    ]
+    correct_answers = [float(q["a"]) for q in get_questions(difficulty)]
     if submitted_answers != correct_answers:
-        flash("Sorry, not all answers are correct. Please try again.", "danger")
         answers = {
-            k: a if v == a else ""
+            k: "" if (v == "" or float(v) != a) else v
             for (k, v), a in zip(request.form.items(), correct_answers)
         }
         progress = int(
@@ -157,6 +160,13 @@ def index():
             / len(correct_answers)
             * 100
         )
+        if progress > session["nr_answered"]:
+            flash("Well Done, please continue.", "info")
+        else:
+            flash("Please try again.", "danger")
+
+        session["nr_answered"] = progress
+
         return render_template(
             "index.html",
             questions=get_questions(difficulty),
