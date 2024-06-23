@@ -79,7 +79,7 @@ def get_hard_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(2):
+    for _ in range(1):
         a = random.randint(20, 99)
         b = random.randint(20, 99)
         q = f"{a} * {b}"
@@ -87,7 +87,7 @@ def get_hard_questions():
 
     for _ in range(5):
         a = random.randint(2, 100)
-        b = random.randint(2, 100)
+        b = random.randint(2, 1000)
         q = f"Hva er {a} % av {b}"
         questions.append({"q": q, "a": round(a / 100 * b, 2)})
 
@@ -110,9 +110,9 @@ def get_hard_questions():
         questions.append({"q": q, "a": str(a - b)})
 
     while len(questions) < 20:
-        a = random.randint(2, 10)
+        a = random.randint(2, 10) * random.choice([-1, 1])
         b = random.randint(-100, 100)
-        x = random.randint(1, 30)
+        x = random.randint(1, 99) * random.choice([-1, 1])
         q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
         questions.append({"q": q, "a": str(x)})
 
