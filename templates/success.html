@@ -5,9 +5,6 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<script>
 		$(document).ready(function() {
-			// Replace YOUR_UNSPLASH_ACCESS_KEY with your actual Unsplash API access key
-			var accessKey = "kPaGYROhEyoYmTjMcrZyO5Vuf7olznGIw-1oCtrYwro";
-			var apiUrl = "https://api.unsplash.com/photos/random?query=fortnite&orientation=landscape&client_id=" + accessKey;
 			
 			// Get a random image from Unsplash
 			$.getJSON(apiUrl, function(data) {
