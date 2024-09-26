@@ -79,9 +79,9 @@ def get_hard_questions():
     random.seed(date.today().toordinal())
 
     questions = []
-    for _ in range(1):
-        a = random.randint(20, 99)
-        b = random.randint(20, 99)
+    for _ in range(3):
+        a = random.randint(20, 999)
+        b = random.randint(20, 999)
         q = f"{a} * {b}"
         questions.append({"q": q, "a": str(a * b)})
 
