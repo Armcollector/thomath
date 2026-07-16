@@ -62,6 +62,19 @@ def subtraction_questions(
     return questions
 
 
+def percentage_questions(
+    number: int, min_value: int, max_value: int
+) -> list[dict[str, str]]:
+    """Return number of percentage questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(0, 100)
+        b = random.randint(min_value, max_value)
+        q = f"Hva er {a} % av {b}"
+        questions.append({"q": q, "a": round(a / 100 * b, 2)})
+    return questions
+
+
 def get_easy_questions() -> list[dict[str, str]]:
     """Return a list of NUMBER_OF_EASY_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
@@ -93,11 +106,7 @@ def get_hard_questions() -> list[dict[str, str]]:
     questions = []
     questions.extend(multiplication_questions(3, 20, 999))
     questions.extend(subtraction_questions(4, 1000, 9999))
-    for _ in range(5):
-        a = random.randint(2, 100)
-        b = random.randint(2, 1000)
-        q = f"Hva er {a} % av {b}"
-        questions.append({"q": q, "a": round(a / 100 * b, 2)})
+    questions.extend(percentage_questions(3, 2, 1000))
 
     for _ in range(2):
         a = random.randint(100, 999)
