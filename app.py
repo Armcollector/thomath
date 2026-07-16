@@ -36,18 +36,26 @@ def multiplication_questions(
     return questions
 
 
+def addition_questions(
+    number: int, min_value: int, max_value: int
+) -> list[dict[str, str]]:
+    """Return number of addition with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        q = f"{a} + {b}"
+        questions.append({"q": q, "a": str(a + b)})
+    return questions
+
+
 def get_easy_questions() -> list[dict[str, str]]:
     """Return a list of NUMBER_OF_EASY_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
     questions.extend(multiplication_questions(5, 1, 10))
-
-    for _ in range(4):
-        a = random.randint(500, 2500)
-        b = random.randint(500, 2500)
-        q = f"{a} + {b}"
-        questions.append({"q": q, "a": str(a + b)})
+    questions.extend(addition_questions(4, 500, 2500))
 
     for _ in range(3):
         a = random.randint(500, 2500)
@@ -66,12 +74,7 @@ def get_medium_questions() -> list[dict[str, str]]:
 
     questions = []
     questions.extend(multiplication_questions(6, 10, 20))
-
-    for _ in range(5):
-        a = random.randint(1500, 7500)
-        b = random.randint(1500, 7500)
-        q = f"{a} + {b}"
-        questions.append({"q": q, "a": str(a + b)})
+    questions.extend(addition_questions(5, 1500, 7500))
 
     for _ in range(3):
         a = random.randint(1000, 6000)
