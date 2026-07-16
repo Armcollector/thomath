@@ -13,14 +13,17 @@ app.secret_key = "100digitsofpi"  # noqa: S105
 def get_questions(difficulty: str) -> list[dict[str, str]]:
     """Return a list of questions based on the difficulty level."""
     if difficulty == "easy":
-        return get_easy_questions()
-    if difficulty == "medium":
-        return get_medium_questions()
-    if difficulty == "hard":
-        return get_hard_questions()
+        questions = get_easy_questions()
+    elif difficulty == "medium":
+        questions = get_medium_questions()
+    elif difficulty == "hard":
+        questions = get_hard_questions()
+    else:
+        difficulty_message = f"Unknown difficulty: {difficulty}"
+        raise ValueError(difficulty_message)
 
-    difficulty_message = f"Unknown difficulty: {difficulty}"
-    raise ValueError(difficulty_message)
+    random.shuffle(questions)  # Shuffle the list of questions
+    return questions
 
 
 def multiplication_questions(
@@ -75,6 +78,38 @@ def percentage_questions(
     return questions
 
 
+def division_questions(
+    number: int, min_value: int, max_value: int
+) -> list[dict[str, str]]:
+    """Return number of division questions with min and max values."""
+    questions = []
+    while len(questions) < number:
+        a = random.randint(min_value, max_value)
+
+        divisors = [i for i in range(2, 10) if a % i == 0]
+        if not divisors:
+            continue
+        b = random.choice(divisors)
+
+        q = f"{a} / {b}"
+        questions.append({"q": q, "a": str(a // b)})
+    return questions
+
+
+def linear_equation_questions(
+    number: int, a_value: int, b_value: int
+) -> list[dict[str, str]]:
+    """Return number of linear equation questions with a and b values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(2, a_value) * random.choice([-1, 1])
+        b = random.randint(-b_value, b_value)
+        x = random.randint(1, 99) * random.choice([-1, 1])
+        q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
+        questions.append({"q": q, "a": str(x)})
+    return questions
+
+
 def get_easy_questions() -> list[dict[str, str]]:
     """Return a list of NUMBER_OF_EASY_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
@@ -83,7 +118,6 @@ def get_easy_questions() -> list[dict[str, str]]:
     questions.extend(multiplication_questions(5, 1, 10))
     questions.extend(addition_questions(4, 500, 2500))
     questions.extend(subtraction_questions(3, 500, 2500))
-    random.shuffle(questions)  # Shuffle the list of questions
     return questions
 
 
@@ -95,7 +129,6 @@ def get_medium_questions() -> list[dict[str, str]]:
     questions.extend(multiplication_questions(6, 10, 20))
     questions.extend(addition_questions(5, 1500, 7500))
     questions.extend(subtraction_questions(3, 1000, 6000))
-    random.shuffle(questions)  # Shuffle the list of questions
     return questions
 
 
@@ -107,26 +140,8 @@ def get_hard_questions() -> list[dict[str, str]]:
     questions.extend(multiplication_questions(3, 20, 999))
     questions.extend(subtraction_questions(4, 1000, 9999))
     questions.extend(percentage_questions(3, 2, 1000))
-
-    for _ in range(2):
-        a = random.randint(100, 999)
-
-        divisors = [i for i in range(2, 10) if a % i == 0]
-        if not divisors:
-            continue
-        b = random.choice(divisors)
-
-        q = f"{a} / {b}"
-        questions.append({"q": q, "a": str(a // b)})
-
-    for _ in range(7):
-        a = random.randint(2, 10) * random.choice([-1, 1])
-        b = random.randint(-100, 100)
-        x = random.randint(1, 99) * random.choice([-1, 1])
-        q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
-        questions.append({"q": q, "a": str(x)})
-
-    random.shuffle(questions)  # Shuffle the list of questions
+    questions.extend(division_questions(2, 100, 999))
+    questions.extend(linear_equation_questions(7, 10, 100))
     return questions
 
 
