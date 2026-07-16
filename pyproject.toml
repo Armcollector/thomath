@@ -1,0 +1,41 @@
+[project]
+name = "Thomath"
+version = "2.0.0"
+dependencies = [
+    "Flask"
+]
+requires-python = ">= 3.11"
+
+
+[dependency-groups]
+dev = [
+    "ruff",
+]
+
+[tool.ruff]
+target-version = 'py311'
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ['E501','PD901', 'D203', 'D213','TD','FIX002', 'COM812', 'ISC001']
+
+
+[tool.ruff.lint.per-file-ignores]
+"**/__init__.py" = ["F401"]
+"__app__/*/__init__.py" = ["ARG001"]
+"tests/**/*.py" = ["ANN", "S101", "SLF001", "PLR2004", "PT011", "S","D103","D100", "ARG001", "PLR0913", "PT006","D"]
+"**/*.ipynb" = ["ALL"]
+
+[tool.ruff.lint.pep8-naming]
+ignore-names = ["cost_per_kWh", "test_cost_kWh"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "4.12.1"
+version_files = [
+    "app/__version__.py",
+    "pyproject.toml:^version",
+]
+tag_format = "v$version"
+bump_message = "bump: version $current_version → $new_version [ci skip]"
+update_changelog_on_bump = true
