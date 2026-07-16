@@ -9,10 +9,6 @@ from werkzeug.wrappers.response import Response
 app = Flask(__name__)
 app.secret_key = "100digitsofpi"  # noqa: S105
 
-NUMBER_OF_HARD_QUESTIONS = 20
-NUMBER_OF_MEDIUM_QUESTIONS = 14
-NUMBER_OF_EASY_QUESTIONS = 12
-
 
 def get_questions(difficulty: str) -> list[dict[str, str]]:
     """Return a list of questions based on the difficulty level."""
@@ -27,16 +23,25 @@ def get_questions(difficulty: str) -> list[dict[str, str]]:
     raise ValueError(difficulty_message)
 
 
+def multiplication_questions(
+    number: int, min_value: int, max_value: int
+) -> list[dict[str, str]]:
+    """Return number of multiplication with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        q = f"{a} * {b}"
+        questions.append({"q": q, "a": str(a * b)})
+    return questions
+
+
 def get_easy_questions() -> list[dict[str, str]]:
     """Return a list of NUMBER_OF_EASY_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    for _ in range(5):
-        a = random.randint(1, 10)
-        b = random.randint(1, 10)
-        q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
+    questions.extend(multiplication_questions(5, 1, 10))
 
     for _ in range(4):
         a = random.randint(500, 2500)
@@ -60,11 +65,7 @@ def get_medium_questions() -> list[dict[str, str]]:
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    for _ in range(6):
-        a = random.randint(10, 20)
-        b = random.randint(10, 20)
-        q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
+    questions.extend(multiplication_questions(6, 10, 20))
 
     for _ in range(5):
         a = random.randint(1500, 7500)
@@ -88,12 +89,7 @@ def get_hard_questions() -> list[dict[str, str]]:
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    for _ in range(3):
-        a = random.randint(20, 999)
-        b = random.randint(20, 999)
-        q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
-
+    questions.extend(multiplication_questions(3, 20, 999))
     for _ in range(5):
         a = random.randint(2, 100)
         b = random.randint(2, 1000)
