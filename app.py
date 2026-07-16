@@ -1,6 +1,7 @@
 """Main views for app."""
 
 import random
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
@@ -10,7 +11,16 @@ app = Flask(__name__)
 app.secret_key = "100digitsofpi"  # noqa: S105
 
 
-def get_questions(difficulty: str) -> list[dict[str, str]]:
+@dataclass
+class Question:
+    """Dataclass for a math question."""
+
+    type: str
+    question: str
+    answer: str
+
+
+def get_questions(difficulty: str) -> list[Question]:
     """Return a list of questions based on the difficulty level."""
     if difficulty == "easy":
         questions = get_easy_questions()
@@ -28,59 +38,55 @@ def get_questions(difficulty: str) -> list[dict[str, str]]:
 
 def multiplication_questions(
     number: int, min_value: int, max_value: int
-) -> list[dict[str, str]]:
+) -> list[Question]:
     """Return number of multiplication with min and max values."""
     questions = []
     for _ in range(number):
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
+        questions.append(Question(type="multiplication", question=q, answer=str(a * b)))
     return questions
 
 
-def addition_questions(
-    number: int, min_value: int, max_value: int
-) -> list[dict[str, str]]:
+def addition_questions(number: int, min_value: int, max_value: int) -> list[Question]:
     """Return number of addition with min and max values."""
     questions = []
     for _ in range(number):
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} + {b}"
-        questions.append({"q": q, "a": str(a + b)})
+        questions.append(Question(type="addition", question=q, answer=str(a + b)))
     return questions
 
 
 def subtraction_questions(
     number: int, min_value: int, max_value: int
-) -> list[dict[str, str]]:
+) -> list[Question]:
     """Return number of subtraction with min and max values."""
     questions = []
     for _ in range(number):
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} - {b}"
-        questions.append({"q": q, "a": str(a - b)})
+        questions.append(Question(type="subtraction", question=q, answer=str(a - b)))
     return questions
 
 
-def percentage_questions(
-    number: int, min_value: int, max_value: int
-) -> list[dict[str, str]]:
+def percentage_questions(number: int, min_value: int, max_value: int) -> list[Question]:
     """Return number of percentage questions with min and max values."""
     questions = []
     for _ in range(number):
         a = random.randint(0, 100)
         b = random.randint(min_value, max_value)
         q = f"Hva er {a} % av {b}"
-        questions.append({"q": q, "a": round(a / 100 * b, 2)})
+        questions.append(
+            Question(type="percentage", question=q, answer=str(round(a / 100 * b, 2)))
+        )
     return questions
 
 
-def division_questions(
-    number: int, min_value: int, max_value: int
-) -> list[dict[str, str]]:
+def division_questions(number: int, min_value: int, max_value: int) -> list[Question]:
     """Return number of division questions with min and max values."""
     questions = []
     while len(questions) < number:
@@ -92,13 +98,13 @@ def division_questions(
         b = random.choice(divisors)
 
         q = f"{a} / {b}"
-        questions.append({"q": q, "a": str(a // b)})
+        questions.append(Question(type="division", question=q, answer=str(a // b)))
     return questions
 
 
 def linear_equation_questions(
     number: int, a_value: int, b_value: int
-) -> list[dict[str, str]]:
+) -> list[Question]:
     """Return number of linear equation questions with a and b values."""
     questions = []
     for _ in range(number):
@@ -106,11 +112,11 @@ def linear_equation_questions(
         b = random.randint(-b_value, b_value)
         x = random.randint(1, 99) * random.choice([-1, 1])
         q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
-        questions.append({"q": q, "a": str(x)})
+        questions.append(Question(type="linear_equation", question=q, answer=str(x)))
     return questions
 
 
-def get_easy_questions() -> list[dict[str, str]]:
+def get_easy_questions() -> list[Question]:
     """Return a list of NUMBER_OF_EASY_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
@@ -121,7 +127,7 @@ def get_easy_questions() -> list[dict[str, str]]:
     return questions
 
 
-def get_medium_questions() -> list[dict[str, str]]:
+def get_medium_questions() -> list[Question]:
     """Return a list of NUMBER_OF_MEDIUM_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
@@ -132,7 +138,7 @@ def get_medium_questions() -> list[dict[str, str]]:
     return questions
 
 
-def get_hard_questions() -> list[dict[str, str]]:
+def get_hard_questions() -> list[Question]:
     """Return a list of NUMBER_OF_HARD_QUESTIONS questions."""
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
@@ -173,7 +179,7 @@ def index() -> str | Response:
     submitted_answers = [
         float(i) if i != "" else None for i in list(request.form.values())
     ]
-    correct_answers = [float(q["a"]) for q in get_questions(difficulty)]
+    correct_answers = [float(q.answer) for q in get_questions(difficulty)]
     if submitted_answers != correct_answers:
         answers = {
             k: "" if (v == "" or float(v) != a) else v
