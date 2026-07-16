@@ -9,6 +9,7 @@ requires-python = ">= 3.11"
 
 [dependency-groups]
 dev = [
+    "pre-commit>=4.6.0",
     "ruff",
 ]
 
@@ -25,9 +26,6 @@ ignore = ['E501','PD901', 'D203', 'D213','TD','FIX002', 'COM812', 'ISC001']
 "__app__/*/__init__.py" = ["ARG001"]
 "tests/**/*.py" = ["ANN", "S101", "SLF001", "PLR2004", "PT011", "S","D103","D100", "ARG001", "PLR0913", "PT006","D"]
 "**/*.ipynb" = ["ALL"]
-
-[tool.ruff.lint.pep8-naming]
-ignore-names = ["cost_per_kWh", "test_cost_kWh"]
 
 [tool.commitizen]
 name = "cz_conventional_commits"
