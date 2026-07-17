@@ -3,6 +3,7 @@
 import random
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from fractions import Fraction
 
 
 @dataclass
@@ -11,7 +12,7 @@ class Question:
 
     type: str
     question: str
-    answer: str
+    answer: Fraction
 
 
 def get_questions(difficulty: str) -> list[Question]:
@@ -39,7 +40,13 @@ def multiplication_questions(
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} * {b}"
-        questions.append(Question(type="multiplication", question=q, answer=str(a * b)))
+        questions.append(
+            Question(
+                type="multiplication",
+                question=q,
+                answer=Fraction(a * b),
+            )
+        )
     return questions
 
 
@@ -50,7 +57,7 @@ def addition_questions(number: int, min_value: int, max_value: int) -> list[Ques
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} + {b}"
-        questions.append(Question(type="addition", question=q, answer=str(a + b)))
+        questions.append(Question(type="addition", question=q, answer=Fraction(a + b)))
     return questions
 
 
@@ -63,7 +70,9 @@ def subtraction_questions(
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} - {b}"
-        questions.append(Question(type="subtraction", question=q, answer=str(a - b)))
+        questions.append(
+            Question(type="subtraction", question=q, answer=Fraction(a - b))
+        )
     return questions
 
 
@@ -75,7 +84,9 @@ def percentage_questions(number: int, min_value: int, max_value: int) -> list[Qu
         b = random.randint(min_value, max_value)
         q = f"Hva er {a} % av {b}"
         questions.append(
-            Question(type="percentage", question=q, answer=str(round(a / 100 * b, 2)))
+            Question(
+                type="percentage", question=q, answer=Fraction(a, 100) * Fraction(b)
+            )
         )
     return questions
 
@@ -92,7 +103,7 @@ def division_questions(number: int, min_value: int, max_value: int) -> list[Ques
         b = random.choice(divisors)
 
         q = f"{a} / {b}"
-        questions.append(Question(type="division", question=q, answer=str(a // b)))
+        questions.append(Question(type="division", question=q, answer=Fraction(a // b)))
     return questions
 
 
@@ -106,7 +117,31 @@ def linear_equation_questions(
         b = random.randint(-b_value, b_value)
         x = random.randint(1, 99) * random.choice([-1, 1])
         q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
-        questions.append(Question(type="linear_equation", question=q, answer=str(x)))
+        questions.append(
+            Question(type="linear_equation", question=q, answer=Fraction(x))
+        )
+    return questions
+
+
+def fraction_multiplication_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of fraction multiplication questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a_numerator = random.randint(min_value, max_value)
+        a_denominator = random.randint(min_value, max_value)
+        b_numerator = random.randint(min_value, max_value)
+        b_denominator = random.randint(min_value, max_value)
+
+        q = f"({a_numerator}/{a_denominator}) * ({b_numerator}/{b_denominator})"
+        answer_numerator = a_numerator * b_numerator
+        answer_denominator = a_denominator * b_denominator
+
+        answer = Fraction(answer_numerator, answer_denominator)
+        questions.append(
+            Question(type="fraction_multiplication", question=q, answer=answer)
+        )
     return questions
 
 
@@ -137,9 +172,10 @@ def get_hard_questions() -> list[Question]:
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    questions.extend(multiplication_questions(3, 20, 999))
-    questions.extend(subtraction_questions(4, 1000, 9999))
-    questions.extend(percentage_questions(3, 2, 1000))
+    questions.extend(multiplication_questions(1, 20, 999))
+    questions.extend(subtraction_questions(1, 1000, 9999))
+    questions.extend(percentage_questions(2, 2, 1000))
     questions.extend(division_questions(2, 100, 999))
-    questions.extend(linear_equation_questions(7, 10, 100))
+    questions.extend(linear_equation_questions(5, 10, 100))
+    questions.extend(fraction_multiplication_questions(3, 2, 20))
     return questions

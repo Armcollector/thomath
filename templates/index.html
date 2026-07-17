@@ -50,13 +50,12 @@
                         {% for q in questions %}
                             <div class="mb-3 d-flex align-items-center">
                                 <label class="me-3 quiz-label" for="answer{{ loop.index }}">{{ q.question }} =</label>
-                                <input type="number"
+                                <input type="text"
                                        class="form-control"
                                        id="answer{{ loop.index }}"
                                        name="answer{{ loop.index }}"
                                        value="{{ answers['answer' + loop.index|string] }}"
-                                       autocomplete="off"
-                                       step="0.01">
+                                       autocomplete="off">
                             </div>
                         {% endfor %}
                         <button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>

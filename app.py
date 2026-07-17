@@ -1,5 +1,7 @@
 """Main views for app."""
 
+from fractions import Fraction
+
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.wrappers.response import Response
 
@@ -38,12 +40,12 @@ def index() -> str | Response:
     difficulty = session.get("difficulty", "hard")
 
     submitted_answers = [
-        float(i) if i != "" else None for i in list(request.form.values())
+        Fraction(i) if i != "" else None for i in list(request.form.values())
     ]
-    correct_answers = [float(q.answer) for q in get_questions(difficulty)]
+    correct_answers = [q.answer for q in get_questions(difficulty)]
     if submitted_answers != correct_answers:
         answers = {
-            k: "" if (v == "" or float(v) != a) else v
+            k: "" if (v == "" or Fraction(v) != a) else v
             for (k, v), a in zip(request.form.items(), correct_answers, strict=False)
         }
         progress = int(
