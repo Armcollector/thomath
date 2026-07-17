@@ -1,66 +1,68 @@
 <!DOCTYPE html>
 <html>
-
     <head>
         <title>Thomas math quiz</title>
-	<!-- Add Bootstrap CSS file -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <!-- Add Bootstrap CSS file -->
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     </head>
-
     <body>
-
-        <form method="POST" action="{{ url_for('index') }}">
-            <h4>Choose difficulty:</h4>
-            <div class="form-group form-inline">
-                <input type="radio" class="form-control" id="easy" name="difficulty" value="easy">
-                <label for="easy">Easy</label>
-                <input type="radio" class="form-control" id="medium" name="difficulty" value="medium">
-                <label for="medium">Medium</label>
-                <input type="radio" class="form-control" id="hard" name="difficulty" value="hard">
-                <label for="hard">Hard</label>
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </div>
-
-        </form>
-
-        <div class="container mt-5">
-
+        <div class="container mt-5 quiz-container">
+            <form method="post" action="{{ url_for("index") }}" class="mb-4">
+                <h4 class="mb-2">Choose difficulty:</h4>
+                <div class="btn-group" role="group">
+                    {% for level in ['easy', 'medium', 'hard'] %}
+                        <button type="submit"
+                                name="difficulty"
+                                value="{{ level }}"
+                                class="btn {{ 'btn-primary' if difficulty == level else 'btn-outline-primary' }}">
+                            {{ level | capitalize }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+        <div class="container mt-5 quiz-container">
             <h1 class="text-center mb-4">Thomas math quiz</h1>
-
-            <div class="progress" style="height: 30px;">
-                <div class="progress-bar" role="progressbar" style="width: {{ progress }}%" aria-valuenow="{{ progress }}"
-                     aria-valuemin="0" aria-valuemax="100">{{ progress }}%</div>
+            <div class="progress quiz-progress">
+                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                     role="progressbar"
+                     style="width: {{ progress }}%"
+                     aria-valuenow="{{ progress }}"
+                     aria-valuemin="0"
+                     aria-valuemax="100">{{ progress }}%</div>
             </div>
-
-
-            {% with messages = get_flashed_messages() %}
+            {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="row">
                         <div class="col-md-6 offset-md-3">
-                            {% for message in messages %}
-                                {{ message }}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} text-center" role="alert">{{ message }}</div>
                             {% endfor %}
                         </div>
                     </div>
                 {% endif %}
             {% endwith %}
-
-            <form method="POST" action="{{ url_for('index') }}">
-                {% for q in questions %}
-                    <div class="form-group form-inline">
-                        <label class="mr-2" style="width: 200px">{{ q.question }} =</label>
-                        <input type="number" class="form-control" id="answer{{ loop.index }}" name="answer{{ loop.index }}"
-                               value="{{answers['answer' + loop.index|string]}}" autocomplete="off" step="0.01">
-                    </div>
-                {% endfor %}
-                <button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>
-            </form>
-        </div>
-
-	<!-- Add Bootstrap JS file -->
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    </body>
-
-</html>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="post" action="{{ url_for("index") }}">
+                        {% for q in questions %}
+                            <div class="mb-3 d-flex align-items-center">
+                                <label class="me-3 quiz-label" for="answer{{ loop.index }}">{{ q.question }} =</label>
+                                <input type="number"
+                                       class="form-control"
+                                       id="answer{{ loop.index }}"
+                                       name="answer{{ loop.index }}"
+                                       value="{{ answers['answer' + loop.index|string] }}"
+                                       autocomplete="off"
+                                       step="0.01">
+                            </div>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+    </html>

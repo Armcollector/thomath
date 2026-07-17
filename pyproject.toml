@@ -9,6 +9,7 @@ requires-python = ">= 3.11"
 
 [dependency-groups]
 dev = [
+    "djlint>=1.40.7",
     "pre-commit>=4.6.0",
     "ruff",
 ]
