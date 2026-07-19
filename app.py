@@ -11,6 +11,23 @@ app = Flask(__name__)
 app.secret_key = "100digitsofpi"  # noqa: S105
 
 
+def is_close(a: Fraction, b: Fraction, abs_tol: float = 1e-2) -> bool:
+    """Check if two fractions are close to each other."""
+    if a is None or b is None:
+        return False
+    return abs(a - b) <= abs_tol
+
+
+def parse_input(value: str) -> Fraction | None:
+    """Parse a string input into a Fraction, or return None if the input is empty."""
+    if value == "":
+        return None
+    try:
+        return Fraction(value)
+    except ValueError:
+        return None
+
+
 @app.route("/", methods=["GET", "POST"])
 def index() -> str | Response:
     """Display main page for thomath."""
@@ -39,18 +56,23 @@ def index() -> str | Response:
 
     difficulty = session.get("difficulty", "hard")
 
-    submitted_answers = [
-        Fraction(i) if i != "" else None for i in list(request.form.values())
-    ]
+    submitted_answers = [parse_input(i) for i in list(request.form.values())]
     correct_answers = [q.answer for q in get_questions(difficulty)]
-    if submitted_answers != correct_answers:
+
+    results = [
+        is_close(a, b) for a, b in zip(submitted_answers, correct_answers, strict=False)
+    ]
+    all_correct = all(results) and len(results) == len(correct_answers)
+
+    if not all_correct:
         answers = {
-            k: "" if (v == "" or Fraction(v) != a) else v
+            k: "" if (v == "" or not is_close(parse_input(v), a)) else v
             for (k, v), a in zip(request.form.items(), correct_answers, strict=False)
         }
         progress = int(
             sum(
-                a == b for a, b in zip(submitted_answers, correct_answers, strict=False)
+                is_close(a, b)
+                for a, b in zip(submitted_answers, correct_answers, strict=False)
             )
             / len(correct_answers)
             * 100

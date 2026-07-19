@@ -116,9 +116,53 @@ def linear_equation_questions(
         a = random.randint(2, a_value) * random.choice([-1, 1])
         b = random.randint(-b_value, b_value)
         x = random.randint(1, 99) * random.choice([-1, 1])
-        q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
+        q = f"{a}x{b:+}={a * x + b} , x=?"
         questions.append(
             Question(type="linear_equation", question=q, answer=Fraction(x))
+        )
+    return questions
+
+
+def linear_equations_with_brackets_questions(
+    number: int, a_value: int
+) -> list[Question]:
+    """Return number of linear equation questions with brackets with a value.
+
+    Of the form a(bx +- c) = dx +- e, where a, b, c, d, e are integers and x is the variable to solve for.
+    """
+    questions = []
+    for _ in range(number):
+        a = random.randint(2, a_value)
+        b = random.randint(-a_value, a_value)
+        c = random.randint(-a_value, a_value)
+        d = random.randint(-a_value, a_value)
+        x = random.randint(1, 15) * random.choice([-1, 1])
+        e = a * (b * x + c) - d * x
+
+        q = f"{a}({b}x{c:+})={d}x{e:+} , x=?"
+        questions.append(
+            Question(
+                type="linear_equation_with_brackets", question=q, answer=Fraction(x)
+            )
+        )
+    return questions
+
+
+def fraction_multiplied_by_integer_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of fraction multiplied by integer questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a_numerator = random.randint(min_value, max_value)
+        a_denominator = random.randint(min_value, max_value)
+        b_integer = random.randint(min_value, max_value)
+
+        q = f"({a_numerator}/{a_denominator}) * {b_integer}"
+        a_frac = Fraction(a_numerator, a_denominator)
+        answer = a_frac * b_integer
+        questions.append(
+            Question(type="fraction_multiplied_by_integer", question=q, answer=answer)
         )
     return questions
 
@@ -135,13 +179,53 @@ def fraction_multiplication_questions(
         b_denominator = random.randint(min_value, max_value)
 
         q = f"({a_numerator}/{a_denominator}) * ({b_numerator}/{b_denominator})"
-        answer_numerator = a_numerator * b_numerator
-        answer_denominator = a_denominator * b_denominator
-
-        answer = Fraction(answer_numerator, answer_denominator)
+        a_frac = Fraction(a_numerator, a_denominator)
+        b_frac = Fraction(b_numerator, b_denominator)
+        answer = a_frac * b_frac
         questions.append(
             Question(type="fraction_multiplication", question=q, answer=answer)
         )
+    return questions
+
+
+def fraction_division_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of fraction division questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a_numerator = random.randint(min_value, max_value)
+        a_denominator = random.randint(min_value, max_value)
+        b_numerator = random.randint(min_value, max_value)
+        b_denominator = random.randint(min_value, max_value)
+
+        q = f"({a_numerator}/{a_denominator}) / ({b_numerator}/{b_denominator})"
+
+        a_frac = Fraction(a_numerator, a_denominator)
+        b_frac = Fraction(b_numerator, b_denominator)
+
+        answer = a_frac / b_frac
+        questions.append(Question(type="fraction_division", question=q, answer=answer))
+    return questions
+
+
+def fraction_addition_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of fraction addition questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a_numerator = random.randint(min_value, max_value)
+        a_denominator = random.randint(min_value, max_value)
+        b_numerator = random.randint(min_value, max_value)
+        b_denominator = random.randint(min_value, max_value)
+
+        q = f"({a_numerator}/{a_denominator}) + ({b_numerator}/{b_denominator})"
+
+        a_frac = Fraction(a_numerator, a_denominator)
+        b_frac = Fraction(b_numerator, b_denominator)
+        answer = a_frac + b_frac
+        questions.append(Question(type="fraction_addition", question=q, answer=answer))
     return questions
 
 
@@ -176,6 +260,10 @@ def get_hard_questions() -> list[Question]:
     questions.extend(subtraction_questions(1, 1000, 9999))
     questions.extend(percentage_questions(2, 2, 1000))
     questions.extend(division_questions(2, 100, 999))
-    questions.extend(linear_equation_questions(5, 10, 100))
+    questions.extend(linear_equation_questions(2, 10, 100))
     questions.extend(fraction_multiplication_questions(3, 2, 20))
+    questions.extend(fraction_division_questions(3, 2, 20))
+    questions.extend(fraction_addition_questions(2, 2, 20))
+    questions.extend(fraction_multiplied_by_integer_questions(2, 2, 20))
+    questions.extend(linear_equations_with_brackets_questions(2, 10))
     return questions
