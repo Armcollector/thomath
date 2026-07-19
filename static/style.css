@@ -1,0 +1,11 @@
+.quiz-container {
+    max-width: 640px;
+}
+
+.quiz-progress {
+    height: 30px;
+}
+
+.quiz-label {
+    width: 300px;
+}

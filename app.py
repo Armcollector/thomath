@@ -1,131 +1,42 @@
-import random
-from datetime import date
+"""Main views for app."""
+
+from fractions import Fraction
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
+from werkzeug.wrappers.response import Response
+
+from questions import get_questions
 
 app = Flask(__name__)
-app.secret_key = "100digitsofpi"
+app.secret_key = "100digitsofpi"  # noqa: S105
 
 
-def get_questions(difficulty):
-    if difficulty == "easy":
-        return get_easy_questions()
-    elif difficulty == "medium":
-        return get_medium_questions()
-    elif difficulty == "hard":
-        return get_hard_questions()
-    else:
-        raise ValueError(f"Unknown difficulty: {difficulty}")
+def is_close(a: Fraction, b: Fraction, abs_tol: float = 1e-2) -> bool:
+    """Check if two fractions are close to each other."""
+    if a is None or b is None:
+        return False
+    return abs(a - b) <= abs_tol
 
 
-def get_easy_questions():
-    """Return a list of 20 questions."""
-    random.seed(date.today().toordinal())
-
-    questions = []
-    for _ in range(5):
-        a = random.randint(1, 10)
-        b = random.randint(1, 10)
-        q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
-
-    while len(questions) < 9:
-        a = random.randint(500, 2500)
-        b = random.randint(500, 2500)
-        q = f"{a} + {b}"
-        questions.append({"q": q, "a": str(a + b)})
-
-    while len(questions) < 12:
-        a = random.randint(500, 2500)
-        b = random.randint(500, 2500)
-        b, a = sorted([a, b])
-        q = f"{a} - {b}"
-        questions.append({"q": q, "a": str(a - b)})
-
-    random.shuffle(questions)  # Shuffle the list of questions
-    return questions
-
-
-def get_medium_questions():
-    """Return a list of 20 questions."""
-    random.seed(date.today().toordinal())
-
-    questions = []
-    for _ in range(6):
-        a = random.randint(10, 20)
-        b = random.randint(10, 20)
-        q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
-
-    while len(questions) < 11:
-        a = random.randint(1500, 7500)
-        b = random.randint(1500, 7500)
-        q = f"{a} + {b}"
-        questions.append({"q": q, "a": str(a + b)})
-
-    while len(questions) < 14:
-        a = random.randint(1000, 6000)
-        b = random.randint(1000, 6000)
-        b, a = sorted([a, b])
-        q = f"{a} - {b}"
-        questions.append({"q": q, "a": str(a - b)})
-
-    random.shuffle(questions)  # Shuffle the list of questions
-    return questions
-
-
-def get_hard_questions():
-    """Return a list of 16 questions."""
-    random.seed(date.today().toordinal())
-
-    questions = []
-    for _ in range(3):
-        a = random.randint(20, 999)
-        b = random.randint(20, 999)
-        q = f"{a} * {b}"
-        questions.append({"q": q, "a": str(a * b)})
-
-    for _ in range(5):
-        a = random.randint(2, 100)
-        b = random.randint(2, 1000)
-        q = f"Hva er {a} % av {b}"
-        questions.append({"q": q, "a": round(a / 100 * b, 2)})
-
-    while len(questions) < 10:
-        a = random.randint(100, 999)
-
-        divisors = [i for i in range(2, 10) if a % i == 0]
-        if not divisors:
-            continue
-        b = random.choice(divisors)
-
-        q = f"{a} / {b}"
-        questions.append({"q": q, "a": str(a // b)})
-
-    while len(questions) < 13:
-        a = random.randint(1000, 9999)
-        b = random.randint(1000, 9999)
-        b, a = sorted([a, b])
-        q = f"{a} - {b}"
-        questions.append({"q": q, "a": str(a - b)})
-
-    while len(questions) < 20:
-        a = random.randint(2, 10) * random.choice([-1, 1])
-        b = random.randint(-100, 100)
-        x = random.randint(1, 99) * random.choice([-1, 1])
-        q = f"{a}x{b}={a * x + b} , x=?" if b < 0 else f"{a}x+{b}={a * x + b} , x=?"
-        questions.append({"q": q, "a": str(x)})
-
-    random.shuffle(questions)  # Shuffle the list of questions
-    return questions
+def parse_input(value: str) -> Fraction | None:
+    """Parse a string input into a Fraction, or return None if the input is empty."""
+    if value == "":
+        return None
+    try:
+        return Fraction(value)
+    except ValueError:
+        return None
 
 
 @app.route("/", methods=["GET", "POST"])
-def index():
+def index() -> str | Response:
+    """Display main page for thomath."""
     if "nr_answered" not in session:
         session["nr_answered"] = 0
     if "difficulty" not in session:
         session["difficulty"] = "hard"
+    if "attempts" not in session:
+        session["attempts"] = 0
     # Define a list of 20 math questions
 
     if request.form.get("difficulty") is not None:
@@ -133,34 +44,45 @@ def index():
         if new_difficulty in ["easy", "medium", "hard"]:
             session["difficulty"] = new_difficulty
         else:
-            raise ValueError(f"Unknown difficulty: {new_difficulty}")
+            message = f"Unknown difficulty: {new_difficulty}"
+            raise ValueError(message)
         return render_template(
             "index.html",
             questions=get_questions(new_difficulty),
             answers=[],
             progress=0,
+            difficulty=new_difficulty,
         )
 
     difficulty = session.get("difficulty", "hard")
 
-    submitted_answers = [
-        float(i) if i != "" else None for i in list(request.form.values())
+    submitted_answers = [parse_input(i) for i in list(request.form.values())]
+    correct_answers = [q.answer for q in get_questions(difficulty)]
+
+    results = [
+        is_close(a, b) for a, b in zip(submitted_answers, correct_answers, strict=False)
     ]
-    correct_answers = [float(q["a"]) for q in get_questions(difficulty)]
-    if submitted_answers != correct_answers:
+    all_correct = all(results) and len(results) == len(correct_answers)
+
+    if not all_correct:
         answers = {
-            k: "" if (v == "" or float(v) != a) else v
-            for (k, v), a in zip(request.form.items(), correct_answers)
+            k: "" if (v == "" or not is_close(parse_input(v), a)) else v
+            for (k, v), a in zip(request.form.items(), correct_answers, strict=False)
         }
         progress = int(
-            sum(a == b for a, b in zip(submitted_answers, correct_answers))
+            sum(
+                is_close(a, b)
+                for a, b in zip(submitted_answers, correct_answers, strict=False)
+            )
             / len(correct_answers)
             * 100
         )
         if progress > session["nr_answered"]:
             flash("Well Done, please continue.", "info")
-        else:
+        elif progress <= session["nr_answered"] and request.method == "POST":
             flash("Please try again.", "danger")
+        else:
+            flash("Please answer the questions", "info")
 
         session["nr_answered"] = progress
 
@@ -169,6 +91,7 @@ def index():
             questions=get_questions(difficulty),
             answers=answers,
             progress=progress,
+            difficulty=difficulty,
         )
 
     # Calculate score and redirect to success page
@@ -176,9 +99,10 @@ def index():
 
 
 @app.route("/success/<int:score>")
-def success(score):
+def success(score: int) -> str:
+    """Display the success page with the user's score."""
     return render_template("success.html", score=score)
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run()

@@ -1,0 +1,30 @@
+default_install_hook_types: ["pre-commit", "pre-push", "commit-msg"]
+repos:
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.12.0
+    hooks:
+      - id: commitizen
+      - id: commitizen-branch
+        stages: [ pre-push ]
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: requirements-txt-fixer
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.8.3
+    hooks:
+      - id: ruff
+        args: [ "--fix" ]
+      # Run the formatter.
+      - id: ruff-format
+
+  - repo: https://github.com/rtts/djhtml
+    rev: '3.0.6'  # replace with the latest tag on GitHub
+    hooks:
+      - id: djhtml
