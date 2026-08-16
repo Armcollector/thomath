@@ -133,9 +133,12 @@ def linear_equations_with_brackets_questions(
     questions = []
     for _ in range(number):
         a = random.randint(2, a_value)
-        b = random.randint(-a_value, a_value)
+
+        b = random.choice([i for i in range(-a_value, a_value + 1) if i != 0])
         c = random.randint(-a_value, a_value)
-        d = random.randint(-a_value, a_value)
+
+        d = random.choice([i for i in range(-a_value, a_value + 1) if i != 0])
+
         x = random.randint(1, 15) * random.choice([-1, 1])
         e = a * (b * x + c) - d * x
 
