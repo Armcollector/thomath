@@ -11,8 +11,10 @@ app = Flask(__name__)
 app.secret_key = "100digitsofpi"  # noqa: S105
 
 
-def is_close(a: Fraction, b: Fraction, abs_tol: float = 1e-2) -> bool:
-    """Check if two fractions are close to each other."""
+def is_close(
+    a: Fraction | None, b: Fraction | None, abs_tol: Fraction = Fraction(1, 100)
+) -> bool:
+    """Check if two fractions are close to each other. Return False if either is None."""
     if a is None or b is None:
         return False
     return abs(a - b) <= abs_tol
@@ -22,9 +24,13 @@ def parse_input(value: str) -> Fraction | None:
     """Parse a string input into a Fraction, or return None if the input is empty."""
     if value == "":
         return None
+
+    value = value.replace(" ", "")  # Remove spaces
+    value = value.replace(",", ".")  # Replace commas with dots for decimal input
+
     try:
         return Fraction(value)
-    except ValueError:
+    except (ValueError, ZeroDivisionError):
         return None
 
 
@@ -35,9 +41,6 @@ def index() -> str | Response:
         session["nr_answered"] = 0
     if "difficulty" not in session:
         session["difficulty"] = "hard"
-    if "attempts" not in session:
-        session["attempts"] = 0
-    # Define a list of 20 math questions
 
     if request.form.get("difficulty") is not None:
         new_difficulty = request.form.get("difficulty")
@@ -56,8 +59,10 @@ def index() -> str | Response:
 
     difficulty = session.get("difficulty", "hard")
 
+    questions = get_questions(difficulty)
+
     submitted_answers = [parse_input(i) for i in list(request.form.values())]
-    correct_answers = [q.answer for q in get_questions(difficulty)]
+    correct_answers = [q.answer for q in questions]
 
     results = [
         is_close(a, b) for a, b in zip(submitted_answers, correct_answers, strict=False)
@@ -69,17 +74,10 @@ def index() -> str | Response:
             k: "" if (v == "" or not is_close(parse_input(v), a)) else v
             for (k, v), a in zip(request.form.items(), correct_answers, strict=False)
         }
-        progress = int(
-            sum(
-                is_close(a, b)
-                for a, b in zip(submitted_answers, correct_answers, strict=False)
-            )
-            / len(correct_answers)
-            * 100
-        )
+        progress = int(sum(results) / len(correct_answers) * 100)
         if progress > session["nr_answered"]:
             flash("Well Done, please continue.", "info")
-        elif progress <= session["nr_answered"] and request.method == "POST":
+        elif request.method == "POST":
             flash("Please try again.", "danger")
         else:
             flash("Please answer the questions", "info")
@@ -88,7 +86,7 @@ def index() -> str | Response:
 
         return render_template(
             "index.html",
-            questions=get_questions(difficulty),
+            questions=questions,
             answers=answers,
             progress=progress,
             difficulty=difficulty,
