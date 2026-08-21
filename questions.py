@@ -37,8 +37,8 @@ def multiplication_questions(
     """Return number of multiplication with min and max values."""
     questions = []
     for _ in range(number):
-        a = random.randint(min_value, max_value)
-        b = random.randint(min_value, max_value)
+        a = random.randint(min_value, max_value) / 10 ** (random.randint(0, 3))
+        b = random.randint(min_value, max_value) / 10 ** (random.randint(0, 3))
         q = f"{a} * {b}"
         questions.append(
             Question(
@@ -259,7 +259,7 @@ def get_hard_questions() -> list[Question]:
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    questions.extend(multiplication_questions(1, 20, 999))
+    questions.extend(multiplication_questions(3, 20, 999))
     questions.extend(subtraction_questions(1, 1000, 9999))
     questions.extend(percentage_questions(2, 2, 1000))
     questions.extend(division_questions(2, 100, 999))
