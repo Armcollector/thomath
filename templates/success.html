@@ -5,23 +5,16 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
-
-			// Get a random image from Unsplash
-                $.getJSON(apiUrl, function(data) {
-                    var imageUrl = data.urls.regular;
-                    var imageAlt = data.alt_description;
-                    imageUrl= "https://static.fanbyte.com/uploads/2022/07/fortnite-victory-royale.jpg"
-				// Display the image on the page
-                    $("#image-container").append("<img src='" + imageUrl + "' alt='" + imageAlt + "'>");
-                });
+                var imageUrl = "https://static.fanbyte.com/uploads/2022/07/fortnite-victory-royale.jpg";
+                // Display the image on the page
+                $("#image-container").append("<img src='" + imageUrl + "' alt='Victory Royale' style='width: 50%; height: auto;'>");
             });
         </script>
     </head>
     <body>
         <h1>Success!</h1>
         <p>Your answers have been submitted.</p>
-
-	<!-- This div will be used to display the image -->
+        <!-- This div will be used to display the image -->
         <div id="image-container"></div>
     </body>
 </html>
