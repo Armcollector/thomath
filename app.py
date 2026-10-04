@@ -97,5 +97,13 @@ def success(score: int) -> str:
     return render_template("success.html", score=score)
 
 
+@app.route("/reset")
+def reset() -> Response:
+    """Reset the session score and return to the quiz."""
+    session["nr_answered"] = 0
+    session["difficulty"] = "hard"
+    return redirect(url_for("index"))
+
+
 if __name__ == "__main__":
     app.run()
