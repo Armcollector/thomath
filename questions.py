@@ -212,6 +212,56 @@ def fraction_division_questions(
     return questions
 
 
+def linear_function_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of function questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        x = random.randint(min_value, max_value)
+
+        q = f"Anta f(x) = {a}x + {b}, hva er f({x})?"
+        answer = Fraction(a * x + b, 1)
+        questions.append(Question(type="function", question=q, answer=answer))
+    return questions
+
+
+def linear_function_question_slope_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of linear function slope questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+
+        q = f"Anta f(x) = {a}x + {b}, hva er stigningstallet?"
+        answer = Fraction(a, 1)
+        questions.append(
+            Question(type="linear_function_slope", question=q, answer=answer)
+        )
+    return questions
+
+
+def linear_function_question_constant_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of linear function constant questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+
+        q = f"Anta f(x) = {a}x + {b}, hva er konstantleddet?"
+        answer = Fraction(b, 1)
+        questions.append(
+            Question(type="linear_function_constant", question=q, answer=answer)
+        )
+    return questions
+
+
 def fraction_addition_questions(
     number: int, min_value: int, max_value: int
 ) -> list[Question]:
@@ -229,6 +279,63 @@ def fraction_addition_questions(
         b_frac = Fraction(b_numerator, b_denominator)
         answer = a_frac + b_frac
         questions.append(Question(type="fraction_addition", question=q, answer=answer))
+    return questions
+
+
+def bracket_multiplication_question_simple(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of bracket multiplication questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        c = random.randint(min_value, max_value)
+
+        q = f"({a} + {b}) * {c}"
+        answer = Fraction(a + b, 1) * Fraction(c, 1)
+        questions.append(
+            Question(type="bracket_multiplication", question=q, answer=answer)
+        )
+    return questions
+
+
+def bracket_multiplication_question_complex(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of complex bracket multiplication questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        c = random.randint(min_value, max_value)
+        d = random.randint(min_value, max_value)
+
+        q = f"({a} + {b}) * ({c} + {d})"
+        answer = Fraction(a + b, 1) * Fraction(c + d, 1)
+        questions.append(
+            Question(type="bracket_multiplication", question=q, answer=answer)
+        )
+    return questions
+
+
+def bracket_multiplication_question_variables(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of bracket multiplication (ax+b) (cx+d) questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        c = random.randint(min_value, max_value)
+        d = random.randint(min_value, max_value)
+        e: int = random.randint(min_value, max_value)
+
+        q = f"Anta funksjonen f(x) = ({a}x + {b}) * ({c}x + {d}). Hva er verdien når x = {e}?"
+        answer = Fraction(a * e + b, 1) * Fraction(c * e + d, 1)
+        questions.append(
+            Question(type="bracket_multiplication", question=q, answer=answer)
+        )
     return questions
 
 
@@ -259,14 +366,21 @@ def get_hard_questions() -> list[Question]:
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    questions.extend(multiplication_questions(3, 20, 999))
-    questions.extend(subtraction_questions(1, 1000, 9999))
+    questions.extend(multiplication_questions(0, 20, 999))
+    questions.extend(subtraction_questions(0, 1000, 9999))
     questions.extend(percentage_questions(2, 2, 1000))
     questions.extend(division_questions(2, 100, 999))
     questions.extend(linear_equation_questions(2, 10, 100))
-    questions.extend(fraction_multiplication_questions(3, 2, 20))
-    questions.extend(fraction_division_questions(3, 2, 20))
+    questions.extend(fraction_multiplication_questions(2, 2, 20))
+    questions.extend(fraction_division_questions(2, 2, 20))
     questions.extend(fraction_addition_questions(2, 2, 20))
     questions.extend(fraction_multiplied_by_integer_questions(2, 2, 20))
     questions.extend(linear_equations_with_brackets_questions(2, 10))
+    questions.extend(linear_function_questions(3, 2, 20))
+    questions.extend(linear_function_question_slope_questions(3, -20, 20))
+    questions.extend(linear_function_question_constant_questions(3, -20, 20))
+    questions.extend(bracket_multiplication_question_complex(1, -20, 20))
+    questions.extend(bracket_multiplication_question_simple(1, -20, 20))
+    questions.extend(bracket_multiplication_question_variables(1, -5, 5))
+
     return questions

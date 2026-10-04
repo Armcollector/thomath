@@ -1,5 +1,6 @@
 """Main views for app."""
 
+import os
 from fractions import Fraction
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
@@ -8,7 +9,10 @@ from werkzeug.wrappers.response import Response
 from questions import get_questions
 
 app = Flask(__name__)
-app.secret_key = "100digitsofpi"  # noqa: S105
+if app.debug:
+    app.secret_key = os.urandom(16)  # fresh key every restart → old sessions die
+else:
+    app.secret_key = "100digitsofpi"  # noqa: S105
 
 
 def is_close(
@@ -61,39 +65,30 @@ def index() -> str | Response:
 
     questions = get_questions(difficulty)
 
-    submitted_answers = [parse_input(i) for i in list(request.form.values())]
-    correct_answers = [q.answer for q in questions]
-
-    results = [
-        is_close(a, b) for a, b in zip(submitted_answers, correct_answers, strict=False)
-    ]
-    all_correct = all(results) and len(results) == len(correct_answers)
-
-    if not all_correct:
-        answers = {
-            k: "" if (v == "" or not is_close(parse_input(v), a)) else v
-            for (k, v), a in zip(request.form.items(), correct_answers, strict=False)
-        }
-        progress = int(sum(results) / len(correct_answers) * 100)
-        if progress > session["nr_answered"]:
+    # test if submitted answer is correct
+    if request.method == "POST":
+        submitted_answer = next(parse_input(i) for i in list(request.form.values()))
+        correct_answer = questions[session["nr_answered"]].answer
+        if is_close(submitted_answer, correct_answer):
+            session["nr_answered"] += 1
             flash("Well Done, please continue.", "info")
-        elif request.method == "POST":
-            flash("Please try again.", "danger")
         else:
-            flash("Please answer the questions", "info")
+            flash("Please try again.", "danger")
+    else:
+        flash("Please answer the questions", "info")
 
-        session["nr_answered"] = progress
+    progress = round(session["nr_answered"] / len(questions) * 100)
 
-        return render_template(
-            "index.html",
-            questions=questions,
-            answers=answers,
-            progress=progress,
-            difficulty=difficulty,
-        )
+    if session["nr_answered"] >= len(questions):
+        return redirect(url_for("success", score=100))
 
-    # Calculate score and redirect to success page
-    return redirect(url_for("success", score=100))
+    return render_template(
+        "index.html",
+        question=questions[session["nr_answered"]],
+        progress=progress,
+        difficulty=difficulty,
+        nr_answered=session["nr_answered"],
+    )
 
 
 @app.route("/success/<int:score>")

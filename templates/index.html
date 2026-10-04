@@ -47,17 +47,14 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <form method="post" action="{{ url_for("index") }}">
-                        {% for q in questions %}
-                            <div class="mb-3 d-flex align-items-center">
-                                <label class="me-3 quiz-label" for="answer{{ loop.index }}">{{ q.question }} =</label>
-                                <input type="text"
-                                       class="form-control"
-                                       id="answer{{ loop.index }}"
-                                       name="answer{{ loop.index }}"
-                                       value="{{ answers['answer' + loop.index|string] }}"
-                                       autocomplete="off">
-                            </div>
-                        {% endfor %}
+                        <div class="mb-3">
+                            <label class="form-label" for="answer">{{ question.question }} =</label>
+                            <input type="text"
+                                   class="form-control"
+                                   id="answer"
+                                   name="answer"
+                                   autocomplete="off">
+                        </div>
                         <button type="submit" class="btn btn-primary w-100 mt-3">Submit</button>
                     </form>
                 </div>
