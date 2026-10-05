@@ -2,6 +2,7 @@
 
 import os
 from fractions import Fraction
+from typing import Literal
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from werkzeug.wrappers.response import Response
@@ -16,18 +17,31 @@ else:
 
 
 def is_close(
-    a: Fraction | None, b: Fraction | None, abs_tol: Fraction = Fraction(1, 100)
+    a: Fraction | str | None,
+    b: Fraction | str | None,
+    evaluation_type: Literal["Fraction", "str"],
 ) -> bool:
-    """Check if two fractions are close to each other. Return False if either is None."""
+    """Check if two answers are close to each other. Return False if either is None."""
     if a is None or b is None:
         return False
-    return abs(a - b) <= abs_tol
+
+    if evaluation_type == "str":
+        return a == b
+
+    if isinstance(a, Fraction) and isinstance(b, Fraction):
+        return abs(a - b) <= Fraction(1, 100)
+    return False
 
 
-def parse_input(value: str) -> Fraction | None:
+def parse_input(
+    value: str, evaluation_type: Literal["Fraction", "str"]
+) -> Fraction | str | None:
     """Parse a string input into a Fraction, or return None if the input is empty."""
     if value == "":
         return None
+
+    if evaluation_type == "str":
+        return value.replace(" ", "")
 
     value = value.replace(" ", "")  # Remove spaces
     value = value.replace(",", ".")  # Replace commas with dots for decimal input
@@ -67,9 +81,16 @@ def index() -> str | Response:
 
     # test if submitted answer is correct
     if request.method == "POST":
-        submitted_answer = next(parse_input(i) for i in list(request.form.values()))
+        submitted_answer = next(
+            parse_input(i, questions[session["nr_answered"]].evaluation_type)
+            for i in list(request.form.values())
+        )
         correct_answer = questions[session["nr_answered"]].answer
-        if is_close(submitted_answer, correct_answer):
+        if is_close(
+            submitted_answer,
+            correct_answer,
+            evaluation_type=questions[session["nr_answered"]].evaluation_type,
+        ):
             session["nr_answered"] += 1
             flash("Well Done, please continue.", "info")
         else:

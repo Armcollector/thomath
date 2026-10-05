@@ -4,6 +4,7 @@ import random
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from fractions import Fraction
+from typing import Literal
 
 
 @dataclass
@@ -12,7 +13,8 @@ class Question:
 
     type: str
     question: str
-    answer: Fraction
+    answer: Fraction | str
+    evaluation_type: Literal["Fraction", "str"]
 
 
 def get_questions(difficulty: str) -> list[Question]:
@@ -45,6 +47,7 @@ def multiplication_questions(
                 type="multiplication",
                 question=q,
                 answer=Fraction(a * b),
+                evaluation_type="Fraction",
             )
         )
     return questions
@@ -57,7 +60,14 @@ def addition_questions(number: int, min_value: int, max_value: int) -> list[Ques
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
         q = f"{a} + {b}"
-        questions.append(Question(type="addition", question=q, answer=Fraction(a + b)))
+        questions.append(
+            Question(
+                type="addition",
+                question=q,
+                answer=Fraction(a + b),
+                evaluation_type="Fraction",
+            )
+        )
     return questions
 
 
@@ -71,7 +81,12 @@ def subtraction_questions(
         b = random.randint(min_value, max_value)
         q = f"{a} - {b}"
         questions.append(
-            Question(type="subtraction", question=q, answer=Fraction(a - b))
+            Question(
+                type="subtraction",
+                question=q,
+                answer=Fraction(a - b),
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -85,7 +100,10 @@ def percentage_questions(number: int, min_value: int, max_value: int) -> list[Qu
         q = f"Hva er {a} % av {b}"
         questions.append(
             Question(
-                type="percentage", question=q, answer=Fraction(a, 100) * Fraction(b)
+                type="percentage",
+                question=q,
+                answer=Fraction(a, 100) * Fraction(b),
+                evaluation_type="Fraction",
             )
         )
     return questions
@@ -103,7 +121,14 @@ def division_questions(number: int, min_value: int, max_value: int) -> list[Ques
         b = random.choice(divisors)
 
         q = f"{a} / {b}"
-        questions.append(Question(type="division", question=q, answer=Fraction(a // b)))
+        questions.append(
+            Question(
+                type="division",
+                question=q,
+                answer=Fraction(a // b),
+                evaluation_type="Fraction",
+            )
+        )
     return questions
 
 
@@ -118,8 +143,14 @@ def linear_equation_questions(
         x = random.randint(1, 99) * random.choice([-1, 1])
         q = f"{a}x{b:+}={a * x + b} , x=?"
         questions.append(
-            Question(type="linear_equation", question=q, answer=Fraction(x))
+            Question(
+                type="linear_equation",
+                question=q,
+                answer=Fraction(x),
+                evaluation_type="Fraction",
+            )
         )
+
     return questions
 
 
@@ -145,7 +176,10 @@ def linear_equations_with_brackets_questions(
         q = f"{a}({b}x{c:+})={d}x{e:+} , x=?"
         questions.append(
             Question(
-                type="linear_equation_with_brackets", question=q, answer=Fraction(x)
+                type="linear_equation_with_brackets",
+                question=q,
+                answer=Fraction(x),
+                evaluation_type="Fraction",
             )
         )
     return questions
@@ -165,7 +199,12 @@ def fraction_multiplied_by_integer_questions(
         a_frac = Fraction(a_numerator, a_denominator)
         answer = a_frac * b_integer
         questions.append(
-            Question(type="fraction_multiplied_by_integer", question=q, answer=answer)
+            Question(
+                type="fraction_multiplied_by_integer",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -186,7 +225,12 @@ def fraction_multiplication_questions(
         b_frac = Fraction(b_numerator, b_denominator)
         answer = a_frac * b_frac
         questions.append(
-            Question(type="fraction_multiplication", question=q, answer=answer)
+            Question(
+                type="fraction_multiplication",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -208,7 +252,14 @@ def fraction_division_questions(
         b_frac = Fraction(b_numerator, b_denominator)
 
         answer = a_frac / b_frac
-        questions.append(Question(type="fraction_division", question=q, answer=answer))
+        questions.append(
+            Question(
+                type="fraction_division",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
+        )
     return questions
 
 
@@ -224,7 +275,11 @@ def linear_function_questions(
 
         q = f"Anta f(x) = {a}x + {b}, hva er f({x})?"
         answer = Fraction(a * x + b, 1)
-        questions.append(Question(type="function", question=q, answer=answer))
+        questions.append(
+            Question(
+                type="function", question=q, answer=answer, evaluation_type="Fraction"
+            )
+        )
     return questions
 
 
@@ -240,7 +295,12 @@ def linear_function_question_slope_questions(
         q = f"Anta f(x) = {a}x + {b}, hva er stigningstallet?"
         answer = Fraction(a, 1)
         questions.append(
-            Question(type="linear_function_slope", question=q, answer=answer)
+            Question(
+                type="linear_function_slope",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -257,7 +317,12 @@ def linear_function_question_constant_questions(
         q = f"Anta f(x) = {a}x + {b}, hva er konstantleddet?"
         answer = Fraction(b, 1)
         questions.append(
-            Question(type="linear_function_constant", question=q, answer=answer)
+            Question(
+                type="linear_function_constant",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -278,7 +343,14 @@ def fraction_addition_questions(
         a_frac = Fraction(a_numerator, a_denominator)
         b_frac = Fraction(b_numerator, b_denominator)
         answer = a_frac + b_frac
-        questions.append(Question(type="fraction_addition", question=q, answer=answer))
+        questions.append(
+            Question(
+                type="fraction_addition",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
+        )
     return questions
 
 
@@ -295,7 +367,12 @@ def bracket_multiplication_question_simple(
         q = f"({a} + {b}) * {c}"
         answer = Fraction(a + b, 1) * Fraction(c, 1)
         questions.append(
-            Question(type="bracket_multiplication", question=q, answer=answer)
+            Question(
+                type="bracket_multiplication",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -314,7 +391,12 @@ def bracket_multiplication_question_complex(
         q = f"({a} + {b}) * ({c} + {d})"
         answer = Fraction(a + b, 1) * Fraction(c + d, 1)
         questions.append(
-            Question(type="bracket_multiplication", question=q, answer=answer)
+            Question(
+                type="bracket_multiplication",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -334,7 +416,58 @@ def bracket_multiplication_question_variables(
         q = f"Anta funksjonen f(x) = ({a}x + {b}) * ({c}x + {d}). Hva er verdien når x = {e}?"
         answer = Fraction(a * e + b, 1) * Fraction(c * e + d, 1)
         questions.append(
-            Question(type="bracket_multiplication", question=q, answer=answer)
+            Question(
+                type="bracket_multiplication",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
+        )
+    return questions
+
+
+def bracket_multiplication_question_variables_complex(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of complex bracket multiplication (ax+b) (cx+d) questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        c = random.randint(min_value, max_value)
+        d = random.randint(min_value, max_value)
+
+        q = f"Forenkle uttrykket(skriv på formen xa^2+yab+zb^2) <br> ({a}a{b:+}b) * ({c}a{d:+}b):"
+        answer = f"{a * c}a^2{a * d + b * c:+}ab{b * d:+}b^2"
+        questions.append(
+            Question(
+                type="bracket_multiplication",
+                question=q,
+                answer=answer,
+                evaluation_type="str",
+            )
+        )
+    return questions
+
+
+def cube_volume_questions(
+    number: int, min_value: int, max_value: int
+) -> list[Question]:
+    """Return number of cube volume questions with min and max values."""
+    questions = []
+    for _ in range(number):
+        a = random.randint(min_value, max_value)
+        b = random.randint(min_value, max_value)
+        c = random.randint(min_value, max_value)
+        q = f"Beregn volumet av en kuboide med sider {a},{b},{c}."
+        answer = Fraction(a * b * c, 1)
+        questions.append(
+            Question(
+                type="cube_volume",
+                question=q,
+                answer=answer,
+                evaluation_type="Fraction",
+            )
         )
     return questions
 
@@ -368,8 +501,8 @@ def get_hard_questions() -> list[Question]:
     questions = []
     questions.extend(multiplication_questions(0, 20, 999))
     questions.extend(subtraction_questions(0, 1000, 9999))
-    questions.extend(percentage_questions(2, 2, 1000))
-    questions.extend(division_questions(2, 100, 999))
+    questions.extend(percentage_questions(1, 2, 1000))
+    questions.extend(division_questions(1, 100, 999))
     questions.extend(linear_equation_questions(2, 10, 100))
     questions.extend(fraction_multiplication_questions(2, 2, 20))
     questions.extend(fraction_division_questions(2, 2, 20))
@@ -377,10 +510,11 @@ def get_hard_questions() -> list[Question]:
     questions.extend(fraction_multiplied_by_integer_questions(2, 2, 20))
     questions.extend(linear_equations_with_brackets_questions(2, 10))
     questions.extend(linear_function_questions(3, 2, 20))
-    questions.extend(linear_function_question_slope_questions(3, -20, 20))
-    questions.extend(linear_function_question_constant_questions(3, -20, 20))
+    questions.extend(linear_function_question_slope_questions(1, -20, 20))
+    questions.extend(linear_function_question_constant_questions(1, -20, 20))
     questions.extend(bracket_multiplication_question_complex(1, -20, 20))
     questions.extend(bracket_multiplication_question_simple(1, -20, 20))
-    questions.extend(bracket_multiplication_question_variables(1, -5, 5))
-
+    questions.extend(bracket_multiplication_question_variables(3, -5, 5))
+    questions.extend(bracket_multiplication_question_variables_complex(5, -5, 5))
+    questions.extend(cube_volume_questions(2, 1, 10))
     return questions

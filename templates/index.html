@@ -48,7 +48,7 @@
                 <div class="card-body">
                     <form method="post" action="{{ url_for("index") }}">
                         <div class="mb-3">
-                            <label class="form-label" for="answer">{{ question.question }} =</label>
+                            <label class="form-label" for="answer">{{ question.question | safe }}</label>
                             <input type="text"
                                    class="form-control"
                                    id="answer"
