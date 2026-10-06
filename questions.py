@@ -273,7 +273,7 @@ def linear_function_questions(
         b = random.randint(min_value, max_value)
         x = random.randint(min_value, max_value)
 
-        q = f"Anta f(x) = {a}x + {b}, hva er f({x})?"
+        q = f"Anta f(x) = {a}x{b:+}, hva er f({x})?"
         answer = Fraction(a * x + b, 1)
         questions.append(
             Question(
@@ -292,7 +292,7 @@ def linear_function_question_slope_questions(
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
 
-        q = f"Anta f(x) = {a}x + {b}, hva er stigningstallet?"
+        q = f"Anta f(x) = {a}x{b:+}, hva er stigningstallet?"
         answer = Fraction(a, 1)
         questions.append(
             Question(
@@ -314,7 +314,7 @@ def linear_function_question_constant_questions(
         a = random.randint(min_value, max_value)
         b = random.randint(min_value, max_value)
 
-        q = f"Anta f(x) = {a}x + {b}, hva er konstantleddet?"
+        q = f"Anta f(x) = {a}x{b:+}, hva er konstantleddet?"
         answer = Fraction(b, 1)
         questions.append(
             Question(
@@ -364,7 +364,7 @@ def bracket_multiplication_question_simple(
         b = random.randint(min_value, max_value)
         c = random.randint(min_value, max_value)
 
-        q = f"({a} + {b}) * {c}"
+        q = f"({a}{b:+}) * {c}"
         answer = Fraction(a + b, 1) * Fraction(c, 1)
         questions.append(
             Question(
@@ -388,7 +388,7 @@ def bracket_multiplication_question_complex(
         c = random.randint(min_value, max_value)
         d = random.randint(min_value, max_value)
 
-        q = f"({a} + {b}) * ({c} + {d})"
+        q = f"({a}{b:+}) * ({c}{d:+})"
         answer = Fraction(a + b, 1) * Fraction(c + d, 1)
         questions.append(
             Question(
@@ -413,7 +413,7 @@ def bracket_multiplication_question_variables(
         d = random.randint(min_value, max_value)
         e: int = random.randint(min_value, max_value)
 
-        q = f"Anta funksjonen f(x) = ({a}x + {b}) * ({c}x + {d}). Hva er verdien når x = {e}?"
+        q = f"Anta funksjonen f(x) = ({a}x{b:+}) * ({c}x{d:+}). Hva er verdien når x = {e}?"
         answer = Fraction(a * e + b, 1) * Fraction(c * e + d, 1)
         questions.append(
             Question(

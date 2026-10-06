@@ -92,7 +92,8 @@ def index() -> str | Response:
             evaluation_type=questions[session["nr_answered"]].evaluation_type,
         ):
             session["nr_answered"] += 1
-            flash("Well Done, please continue.", "info")
+            if session["nr_answered"] < len(questions):
+                flash("Well Done, please continue.", "info")
         else:
             flash("Please try again.", "danger")
     else:
@@ -109,6 +110,7 @@ def index() -> str | Response:
         progress=progress,
         difficulty=difficulty,
         nr_answered=session["nr_answered"],
+        answers=questions[session["nr_answered"]].answer,
     )
 
 
