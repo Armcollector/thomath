@@ -431,14 +431,41 @@ def bracket_multiplication_question_variables_complex(
 ) -> list[Question]:
     """Return number of complex bracket multiplication (ax+b) (cx+d) questions with min and max values."""
     questions = []
+
+    possible_values = list(set(range(min_value, max_value + 1)) - {0, -1, 1})
+
     for _ in range(number):
-        a = random.randint(min_value, max_value)
-        b = random.randint(min_value, max_value)
-        c = random.randint(min_value, max_value)
-        d = random.randint(min_value, max_value)
+        a = random.choice(possible_values)
+        b = random.choice(possible_values)
+        c = random.choice(possible_values)
+        d = random.choice(possible_values)
 
         q = f"Forenkle uttrykket(skriv på formen xa^2+yab+zb^2) <br> ({a}a{b:+}b) * ({c}a{d:+}b):"
-        answer = f"{a * c}a^2{a * d + b * c:+}ab{b * d:+}b^2"
+
+        a_squares = a * c
+        ab_coeff = a * d + b * c
+        b_squares = b * d
+
+        answer = ""
+        if a_squares != 0:
+            if a_squares == 1:
+                answer += "+a^2"
+            else:
+                answer += f"{a_squares:+}a^2"
+        if ab_coeff != 0:
+            if ab_coeff == 1:
+                answer += "+ab"
+            else:
+                answer += f"{ab_coeff:+}ab"
+
+        if b_squares != 0:
+            if b_squares == 1:
+                answer += "+b^2"
+            else:
+                answer += f"{b_squares:+}b^2"
+
+        answer = answer.removeprefix("+")
+
         questions.append(
             Question(
                 type="bracket_multiplication",
