@@ -9,19 +9,26 @@
     </head>
     <body>
         <div class="container mt-5 quiz-container">
-            <form method="post" action="{{ url_for("index") }}" class="mb-4">
-                <h4 class="mb-2">Choose difficulty:</h4>
-                <div class="btn-group" role="group">
-                    {% for level in ['easy', 'medium', 'hard'] %}
-                        <button type="submit"
-                                name="difficulty"
-                                value="{{ level }}"
-                                class="btn {{ 'btn-primary' if difficulty == level else 'btn-outline-primary' }}">
-                            {{ level | capitalize }}
-                        </button>
-                    {% endfor %}
+            <div class="row align-items-center">
+                <div class="col">
+                    <form method="post" action="{{ url_for("index") }}" class="mb-4">
+                        <h4 class="mb-2">Choose difficulty:</h4>
+                        <div class="btn-group" role="group">
+                            {% for level in ['easy', 'medium', 'hard'] %}
+                                <button type="submit"
+                                        name="difficulty"
+                                        value="{{ level }}"
+                                        class="btn {{ 'btn-primary' if difficulty == level else 'btn-outline-primary' }}">
+                                    {{ level | capitalize }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </form>
                 </div>
-            </form>
+                <div class="col-auto">
+                    <a href="{{ url_for("reset") }}" class="btn btn-primary">Reset and try again</a>
+                </div>
+            </div>
         </div>
         <div class="container mt-5 quiz-container">
             <h1 class="text-center mb-4">Thomas math quiz</h1>
