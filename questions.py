@@ -526,7 +526,7 @@ def get_hard_questions() -> list[Question]:
     random.seed(datetime.now(tz=UTC).date().toordinal())
 
     questions = []
-    questions.extend(multiplication_questions(0, 20, 999))
+    questions.extend(multiplication_questions(4, 20, 999))
     questions.extend(subtraction_questions(0, 1000, 9999))
     questions.extend(percentage_questions(1, 2, 1000))
     questions.extend(division_questions(1, 100, 999))
@@ -542,6 +542,6 @@ def get_hard_questions() -> list[Question]:
     questions.extend(bracket_multiplication_question_complex(1, -20, 20))
     questions.extend(bracket_multiplication_question_simple(1, -20, 20))
     questions.extend(bracket_multiplication_question_variables(3, -5, 5))
-    questions.extend(bracket_multiplication_question_variables_complex(5, -5, 5))
+    questions.extend(bracket_multiplication_question_variables_complex(4, -5, 5))
     questions.extend(cube_volume_questions(2, 1, 10))
     return questions
