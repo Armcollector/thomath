@@ -99,7 +99,7 @@ def index() -> str | Response:
     else:
         flash("Please answer the questions", "info")
 
-    progress = round(session["nr_answered"] / len(questions) * 100)
+    progress = round(session["nr_answered"] / len(questions) * 100, 1)
 
     if session["nr_answered"] >= len(questions):
         return redirect(url_for("success", score=100))
