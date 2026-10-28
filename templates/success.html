@@ -5,7 +5,7 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $(document).ready(function() {
-                var imageUrl = "https://static.fanbyte.com/uploads/2022/07/fortnite-victory-royale.jpg";
+                var imageUrl = "{{url_for('static', filename='victory.jpg') }}";
                 // Display the image on the page
                 $("#image-container").append("<img src='" + imageUrl + "' alt='Victory Royale' style='width: 50%; height: auto;'>");
             });
